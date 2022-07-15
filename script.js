@@ -1,59 +1,88 @@
+// buttons
+const btns = document.querySelectorAll('.startRound');
+const refresh = document.querySelector('#refresh');
+
+// points
+let humanPoints = 0;
+let pcPoints = 0;
+const yourScore = document.querySelector('#yourScore');
+const computerScore = document.querySelector('#computerScore');
+
+// result div
+const gameResult = document.querySelector('#result');
+let whoWin = document.querySelector('#whoWin');
+
+// reload page
+refresh.addEventListener('click', () => {
+    window.location.reload();
+}); 
+
+// choose weapon
+btns.forEach((button) => {
+    button.addEventListener('click', () => {
+        let playerSelection = button.value;
+        let computerSelection = computerPlay();
+        playRound(playerSelection, computerSelection);
+    });
+});
+
+//disable game buttons function
+function disableButtons() {
+    btns.forEach((button) => {
+        button.disabled = true;
+        button.style.backgroundColor = 'grey';
+    });
+}
+
 // Computer function - random output from 3 elements (rock, paper or scissors)
+let elemets = ["Rock", "Paper", "Scissors"];
 
-const elemets = ["Rock", "Paper", "Scissors"];
-
+//random value for pc generator
 function computerPlay() {
     return elemets[Math.floor(Math.random() * elemets.length)].toLowerCase();
 }
 
-// player choice in round
-function playerInput()  {
-    let playerPrompt = prompt("Please enter Rock, Paper or Scissors", "Your choice");
-    return playerPrompt.toLowerCase();
+//check if player or computer has 5 points
+function checkEnd(humanPoints, pcPoints) {
+    if(humanPoints == 5) {
+        gameResult.style.display = 'block';
+        whoWin.textContent = "Congratulations,you won with computer!";        
+        disableButtons();
+
+    } else if (pcPoints == 5) {
+        gameResult.style.display = 'block';
+        whoWin.textContent = "Unfortunately, you lost with the computer";
+        whoWin.style.color = 'var(--red)';
+        disableButtons();
+    }
 }
 
-// one round with console.log output
+// one round 
 function playRound(playerSelection, computerSelection) {
-    console.log(playerSelection, computerSelection);
     
     if(playerSelection == "rock") {
         if(computerSelection == "paper") {
-            console.log("You Lose! Paper beats Rock");
+            pcPoints++;            
         } else if (computerSelection == "scissors") {
-            console.log("You Win! Rock beats Scissors");
-        } else {
-            console.log("Draw!");
-        }
+            humanPoints++;
+        } 
     } else if (playerSelection == "paper") {
         if(computerSelection == "rock") {
-            console.log("You Win! Paper beats Rock");
+            humanPoints++;
         } else if (computerSelection == "scissors") {
-            console.log("You Lose! Scissors beats Paper");
-        } else {
-            console.log("Draw!");
-        }
+            pcPoints++;
+        } 
     } else if (playerSelection == "scissors") {
         if(computerSelection == "paper") {
-            console.log("You Win! Scissors beats Paper");
+            humanPoints++;
         } else if (computerSelection == "rock") {
-            console.log("You Lose! Rock beats Scissors");
-        } else {
-            console.log("Draw!");
-        }
-    } else {
-        console.log ("Wrong User Input");
+            pcPoints++;
+        } 
     }
 
+    computerScore.textContent = pcPoints;
+    yourScore.textContent = humanPoints;
+
+    checkEnd(humanPoints, pcPoints);
 }
 
-// 5 times run playRound() and get computer and player selection
-function game() {
-    for (let i = 0; i < 5; i++) {
-        let computerSelection = computerPlay();
-        let playerSelection = playerInput();
-        playRound(playerSelection, computerSelection);
-    }
-}
-
-// start game
-game();
